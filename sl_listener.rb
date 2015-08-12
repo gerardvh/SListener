@@ -29,8 +29,8 @@ end
 
 get '/config/kb' do
   config = {
-    name: "SListener",
-    description: "An add-on that listens for ServiceLink incidents and returns a structured and useful response to HipChat.",
+    name: "KBot",
+    description: "An add-on that listens for ServiceLink knowledge article numbers and returns a structured and useful response to HipChat.",
     key: "com.gerardvh.sl_kb_listener",
     links: {
         "homepage": "https://gerardvh.com",
@@ -44,9 +44,9 @@ get '/config/kb' do
     },
     webhook: [{
         url: "https://sl-listener.herokuapp.com/api/kb/",
-        pattern: "[INCinc]+[0-9]{7}",
+        pattern: "[KBkb]+[0-9]{7}",
         event: "room_message",
-        name: "kb_listener"
+        name: "KBot"
         }]
     }
   }
