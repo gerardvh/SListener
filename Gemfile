@@ -5,4 +5,6 @@ gem 'sinatra'
 
 gem 'thin'
 
+gem 'erubis'
+
 # gem 'puma'

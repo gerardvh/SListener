@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'tilt/erubis'
 require 'json'
 
 get '/config/incident' do
@@ -61,6 +62,11 @@ end
 
 post '/api/kb' do
   request.body.rewind
-  data = JSON.parse request.body.read
-  logger.info "Got this as a request body: #{data}"
+  @data = JSON.parse request.body.read
+  # search data for matching regex responses
+  # throw KB #'s at the end of the standard url
+  # pass to the response
+  logger.info "Got this as a request body: #{@data}"
+  
+  erb :hipchat_kb, locals: @data
 end
