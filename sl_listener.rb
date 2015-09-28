@@ -1,6 +1,10 @@
 require 'sinatra'
+require 'thin'
 require 'tilt/erubis'
 require 'json'
+
+require_relative('hipchat_config')
+
 
 get '/config/incident' do
   config = {
@@ -56,7 +60,7 @@ get '/config/kb' do
 end
 
 get '/config/all' do
-  JSON.dump(hipchat_config.all)
+  JSON.dump(config :all)
 end
 
 post '/api/incident' do
