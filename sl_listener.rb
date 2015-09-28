@@ -26,6 +26,7 @@ get '/config/incident' do
     }
   }
   JSON.dump(config)
+  # config.to_json
 end
 
 get '/config/kb' do
@@ -54,19 +55,30 @@ get '/config/kb' do
   JSON.dump(config)
 end
 
+get '/config/all' do
+  JSON.dump(hipchat_config.all)
+end
+
 post '/api/incident' do
   request.body.rewind
   data = JSON.parse request.body.read
   logger.info "Got this as a request body: #{data}"
+  # Think about if I can have all the possibilities in one API
+  # and use regex to do control flow. It may be that there are 
+  # several different types of data in one big message.
 end
 
 post '/api/kb' do
+  base_url = "https://umichprod.service-now.com/kb_view.do?sysparm_article="
+
   request.body.rewind
   @data = JSON.parse request.body.read
   # search data for matching regex responses
   # throw KB #'s at the end of the standard url
   # pass to the response
-  logger.info "Got this as a request body: #{@data}"
-  
+  logger.info "#{@data['event']}"
+  matchesKB = /[KBkb]+[0-9]{7}/.match(@data['item']['message']['message'])
+  logger.info "Matches: #{matchesKB}" # TODO: make this match > 1 item
+
   erb :hipchat_kb, locals: @data
 end
