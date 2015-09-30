@@ -105,10 +105,7 @@ post '/api/all' do
 
   # Encapsulate packaging response for hipchat
   
-  # scan for incident #'s
-  message.scan(/[incINC]{3}\d{7}\b/) { |match|  }
-  # scan for KB's
-  message.scan(/[KBkb]{2}\d{7}/) { |match|  } 
+  
 
 
 

@@ -2,7 +2,7 @@ require 'json'
 
 class Hipchat_helper
 
-attr_reader :all_config
+  attr_reader :all_config
 
   @@dev_url = 'https://9223f920.ngrok.io/api/all'
   @@prod_url = 'https://sl-listener.herokuapp.com/api/all'
@@ -31,54 +31,25 @@ attr_reader :all_config
       }
     }
   end
-
-# incident_config = {
-#   name: 'SListener',
-#   description: 'An add-on that listens for ServiceLink incidents and returns a structured and useful response to HipChat.',
-#   key: 'com.gerardvh.sl_incident_listener',
-#   links: {
-#     homepage: 'https://gerardvh.com',
-#     self: 'https://sl-listener.herokuapp.com/config/incident'
-#   },
-#   capabilities: {
-#   hipchatApiConsumer: {
-#     scopes: [
-#         'send_notification'
-#     ]
-#   },
-#   webhook: [{
-#     url: 'http://96a4b9ae.ngrok.io/api/incident',
-#     pattern: '[INCinc]+[0-9]{7}',
-#     event: 'room_message',
-#     name: 'incident_listener'
-#     }]
-#   }
-# }
-
-# kb_config = {
-#   name: 'KBot',
-#   description: 'An add-on that listens for ServiceLink knowledge article numbers and returns a structured and useful response to HipChat.',
-#   key: 'com.gerardvh.sl_kb_listener',
-#   links: {
-#     homepage: 'https://gerardvh.com',
-#     self: 'https://sl-listener.herokuapp.com/config/kb'
-#   },
-#   capabilities: {
-#   hipchatApiConsumer: {
-#     scopes: [
-#       'send_notification'
-#     ]
-#   },
-#   webhook: [{
-#     url: 'http://96a4b9ae.ngrok.io/api/kb',
-#     pattern: '[KBkb]+[0-9]{7}',
-#     event: 'room_message',
-#     name: 'KBot'
-#     }]
-#   }
-# }
-
 end
 
-# hip = Hipchat_helper.new(dev_mode=true)
-# p hip.all_config
+class Sl_helper
+  @@incident_pattern = /[iI][nN][cC]\d{7}\b/
+  @@kb_pattern = /[kK][bB]\d{7}\b/
+  @@task_pattern = /[tT][aA][sS][kK]\d{7}\b/
+  @@ritm_pattern = /[rR][iI][tT][mM]\d{7}\b/
+
+  def scan_for_matches message
+    # hash to store matches
+    matches = {}
+    # scan for incident #'s and consolidate case
+    matches[:incident] = message.scan(@@incident_pattern).each { |m| m.upcase! }
+    # scan for KB's and consolidate case
+    matches[:kb] = message.scan(@@kb_pattern).each { |m| m.upcase! }
+    # scan for tasks and consolidate case
+    matches[:task] = message.scan(@@task_pattern).each { |m| m.upcase! }
+    # scan for ritms and consolidate case
+    matches[:ritm] = message.scan(@@ritm_pattern).each { |m| m.upcase! }
+    return matches
+  end
+end
