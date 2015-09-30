@@ -58,7 +58,8 @@ get '/config/kb' do
 end
 
 get '/config/all' do
-  config :all
+  config_json = config(:all)
+  p config_json
 end
 
 post '/api/incident' do
@@ -87,4 +88,10 @@ end
 
 post '/api/all' do
   p request.body
+
+  # IDEAS:
+  # send all traffic through here since we want to group responses anyway
+  # use regex to parse for matches of KB's, Incidents, and Tasks/RITMs
+  # add each link to <li> for the response
+
 end

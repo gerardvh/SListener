@@ -96,3 +96,5 @@ kb_config = {
     }]
   }
 }
+
+config :all
