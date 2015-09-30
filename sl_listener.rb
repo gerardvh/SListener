@@ -58,8 +58,8 @@ get '/config/kb' do
 end
 
 get '/config/all' do
-  config_json = config(:all)
-  p config_json
+  hip = Hipchat_helper.new(dev_mode=true)
+  hip.all_config.to_json
 end
 
 post '/api/incident' do
@@ -87,7 +87,7 @@ post '/api/kb' do
 end
 
 post '/api/all' do
-  p request.body
+  p request
 
   # IDEAS:
   # send all traffic through here since we want to group responses anyway
