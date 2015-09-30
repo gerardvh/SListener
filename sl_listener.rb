@@ -92,19 +92,22 @@ get '/api/all' do
 end
 
 post '/api/all' do
+  sl = Sl_helper.new
+
   request.body.rewind
 
   # get what the user said in chat
   message = JSON.parse(request.body.read)['item']['message']['message']
 
   # Encapsulate scanning for relevant strings (for flexibility)
-  # all_matches = Sl_helper.scan_for_matches(message)
+  all_matches = sl.scan_for_matches(message)
+
   # consider using a hash here, with keywords pointing to arrays of matches
 
   # Encapsulate getting data from SL somehow
 
   # Encapsulate packaging response for hipchat
-  
+
   
 
 

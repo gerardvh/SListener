@@ -43,13 +43,18 @@ class Sl_helper
     # hash to store matches
     matches = {}
     # scan for incident #'s and consolidate case
-    matches[:incident] = message.scan(@@incident_pattern).each { |m| m.upcase! }
+    unique_incidents = message.scan(@@incident_pattern).uniq
+    matches[:incident] = unique_incidents.each { |m| m.upcase! }
     # scan for KB's and consolidate case
-    matches[:kb] = message.scan(@@kb_pattern).each { |m| m.upcase! }
+    unique_kbs = message.scan(@@kb_pattern).uniq
+    matches[:kb] = unique_kbs.each { |m| m.upcase! }
     # scan for tasks and consolidate case
-    matches[:task] = message.scan(@@task_pattern).each { |m| m.upcase! }
+    unique_tasks = message.scan(@@task_pattern).uniq
+    matches[:task] = unique_tasks.each { |m| m.upcase! }
     # scan for ritms and consolidate case
-    matches[:ritm] = message.scan(@@ritm_pattern).each { |m| m.upcase! }
+    unique_ritms = message.scan(@@ritm_pattern).uniq
+    matches[:ritm] = unique_ritms.each { |m| m.upcase! }
+    # return our consolidated hash of results
     return matches
   end
 end
