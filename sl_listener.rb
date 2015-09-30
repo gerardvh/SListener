@@ -86,9 +86,16 @@ post '/api/kb' do
   erb :hipchat_kb, locals: @data
 end
 
-post '/api/all' do
-  p request
+get '/api/all' do
+  request.body.rewind
+  JSON.parse request.body.read
 
+
+end
+
+post '/api/all' do
+  request.body.rewind
+  
   # IDEAS:
   # send all traffic through here since we want to group responses anyway
   # use regex to parse for matches of KB's, Incidents, and Tasks/RITMs

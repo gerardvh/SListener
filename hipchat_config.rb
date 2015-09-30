@@ -14,7 +14,7 @@ def initialize(dev_mode=true)
     key: 'com.gerardvh.sl_incident_listener',
     links: {
       homepage: 'https://gerardvh.com',
-      self: 'https://sl-listener.herokuapp.com/config/all'
+      self: 'https://9223f920.ngrok.io/config/all'
     },
     capabilities: {
     hipchatApiConsumer: {
@@ -24,7 +24,7 @@ def initialize(dev_mode=true)
     },
     webhook: [{
       url: dev_mode ? @@dev_url : @@prod_url,
-      pattern: '/[incrmtaskb]{2,4}\d{7}\b/ig',
+      pattern: '[incrmtaskbINCRMTASKB]{2,4}\d{7}\b',
       event: 'room_message',
       name: 'sl_all_listener'
       }]
