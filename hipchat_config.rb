@@ -4,33 +4,33 @@ class Hipchat_helper
 
 attr_reader :all_config
 
-@@dev_url = 'https://9223f920.ngrok.io/api/all'
-@@prod_url = 'https://sl-listener.herokuapp.com/api/all'
+  @@dev_url = 'https://9223f920.ngrok.io/api/all'
+  @@prod_url = 'https://sl-listener.herokuapp.com/api/all'
 
-def initialize(dev_mode=true)
-  @all_config = {
-    name: 'SListener',
-    description: 'An add-on that listens for ServiceLink incidents and returns a structured and useful response to HipChat.',
-    key: 'com.gerardvh.sl_incident_listener',
-    links: {
-      homepage: 'https://gerardvh.com',
-      self: 'https://9223f920.ngrok.io/config/all'
-    },
-    capabilities: {
-    hipchatApiConsumer: {
-      scopes: [
-          'send_notification'
-      ]
-    },
-    webhook: [{
-      url: dev_mode ? @@dev_url : @@prod_url,
-      pattern: '[incrmtaskbINCRMTASKB]{2,4}\d{7}\b',
-      event: 'room_message',
-      name: 'sl_all_listener'
-      }]
+  def initialize(dev_mode=true)
+    @all_config = {
+      name: 'SListener',
+      description: 'An add-on that listens for ServiceLink incidents and returns a structured and useful response to HipChat.',
+      key: 'com.gerardvh.sl_incident_listener',
+      links: {
+        homepage: 'https://gerardvh.com',
+        self: 'https://9223f920.ngrok.io/config/all'
+      },
+      capabilities: {
+      hipchatApiConsumer: {
+        scopes: [
+            'send_notification'
+        ]
+      },
+      webhook: [{
+        url: dev_mode ? @@dev_url : @@prod_url,
+        pattern: '[incrmtaskbINCRMTASKB]{2,4}\d{7}\b',
+        event: 'room_message',
+        name: 'sl_all_listener'
+        }]
+      }
     }
-  }
-end
+  end
 
 # incident_config = {
 #   name: 'SListener',

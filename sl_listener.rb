@@ -89,13 +89,29 @@ end
 get '/api/all' do
   request.body.rewind
   JSON.parse request.body.read
-
-
 end
 
 post '/api/all' do
   request.body.rewind
+
+  # get what the user said in chat
+  message = JSON.parse(request.body.read)['item']['message']['message']
+
+  # Encapsulate scanning for relevant strings (for flexibility)
+  # all_matches = Sl_helper.scan_for_matches(message)
+  # consider using a hash here, with keywords pointing to arrays of matches
+
+  # Encapsulate getting data from SL somehow
+
+  # Encapsulate packaging response for hipchat
   
+  # scan for incident #'s
+  message.scan(/[incINC]{3}\d{7}\b/) { |match|  }
+  # scan for KB's
+  message.scan(/[KBkb]{2}\d{7}/) { |match|  } 
+
+
+
   # IDEAS:
   # send all traffic through here since we want to group responses anyway
   # use regex to parse for matches of KB's, Incidents, and Tasks/RITMs
