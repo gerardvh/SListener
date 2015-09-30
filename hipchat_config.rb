@@ -1,6 +1,7 @@
+require 'json'
 
 @dev_switch = true
-@dev_url = 'http://96a4b9ae.ngrok.io/api/all'
+@dev_url = 'https://a8d04336.ngrok.io/api/all'
 
 def dev?
   # true if in development mode
@@ -12,7 +13,7 @@ def config (table = :all)
   # prefers to use :all 
   case table
   when :all
-    @all_config
+    @all_config.to_json
   when :incident
     @incident_config
   when :kb
@@ -40,7 +41,7 @@ end
     ]
   },
   webhook: [{
-    url: dev? ? @dev_url : 'https://sl-listener.herokuapp.com/api/all',
+    url: @dev_url,
     pattern: '/[incrmtaskb]{2,4}\d{7}\b/ig',
     event: 'room_message',
     name: 'sl_all_listener'

@@ -1,13 +1,11 @@
 require 'sinatra'
-require 'thin'
 require 'tilt/erubis'
 require 'json'
 
 require_relative('hipchat_config')
 
-
 get '/config/incident' do
-  config = {
+  config_string = {
     name: 'SListener',
     description: 'An add-on that listens for ServiceLink incidents and returns a structured and useful response to HipChat.',
     key: 'com.gerardvh.sl_incident_listener',
@@ -29,12 +27,12 @@ get '/config/incident' do
         }]
     }
   }
-  JSON.dump(config)
+  JSON.dump(config_string)
   # config.to_json
 end
 
 get '/config/kb' do
-  config = {
+  config_string = {
     name: 'KBot',
     description: 'An add-on that listens for ServiceLink knowledge article numbers and returns a structured and useful response to HipChat.',
     key: 'com.gerardvh.sl_kb_listener',
@@ -56,11 +54,11 @@ get '/config/kb' do
         }]
     }
   }
-  JSON.dump(config)
+  JSON.dump(config_string)
 end
 
 get '/config/all' do
-  JSON.dump(config :all)
+  config :all
 end
 
 post '/api/incident' do
@@ -85,4 +83,8 @@ post '/api/kb' do
   logger.info "Matches: #{matchesKB}" # TODO: make this match > 1 item
 
   erb :hipchat_kb, locals: @data
+end
+
+post '/api/all' do
+  p request.body
 end
