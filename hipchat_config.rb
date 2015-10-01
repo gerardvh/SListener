@@ -1,4 +1,6 @@
 require 'json'
+require 'rest-client'
+require 'base64'
 
 class Hipchat_helper
 
@@ -40,8 +42,19 @@ class Sl_helper
   @@ritm_pattern = /[rR][iI][tT][mM]\d{7}\b/
 
   def scan_for_matches message
+    patterns = {
+      incident: @@incident_pattern,
+      kb: @@kb_pattern,
+      task: @@task_pattern,
+      ritm: @@ritm_pattern
+    }
     # hash to store matches
     matches = {}
+
+    patterns.each do |key,value|
+      matches[key] = message.scan(value).uniq.each { |m| m.upcase! }
+    end 
+    
     # scan for incident #'s and consolidate case
     unique_incidents = message.scan(@@incident_pattern).uniq
     matches[:incident] = unique_incidents.each { |m| m.upcase! }
@@ -57,4 +70,55 @@ class Sl_helper
     # return our consolidated hash of results
     return matches
   end
+
+  def sl_connection table
+    user = ENV['SL_USER']
+    password = ENV['SL_PASSWORD']
+    baseURL = 'https://umichprod.service-now.com/api/now/table/'
+    sl_headers = {
+      authorization: "Basic #{Base64.strict_encode64("#{user}:#{password}")}",
+      accept: 'application/json'
+      }
+    RestClient::Resource.new baseURL + table, headers: sl_headers
+  end
+
+  def query table, query_str
+    response = JSON.parse sl_connection(table).get params: { number: query_str }
+    response['result'].each { |item| @ids << item['sys_id'] }
+    return @ids
+  end
+
+  def get_query_str sl_numbers
+    # chain together multiple searches for one http request
+    param_str = sl_numbers.each { |num| num += '^OR'}
+    # remove the last '^OR'
+    param_str.chomp!('^OR')
+  end
+
+  def rest_request table, sl_numbers
+    case table
+      # set a certain value for table when we get a symbol argument
+    when :incident
+      query_sl('incident', param_str)
+
+      # response = JSON.parse sl_connection('incident').get params: { number: param_str }
+      # response['result'].each { |incident| puts incident['sys_id'] }
+    when :kb
+      # add string to base URL as a string for our link
+    when :task
+      query_sl('task', param_str)
+
+      # response = JSON.parse sl_connection('task').get params: { number: param_str }
+      # response['result'].each { |incident| puts incident['sys_id'] }
+    when :ritm
+      query_sl('ritm', param_str)
+
+      # response = JSON.parse sl_connection('ritm').get params: { number: param_str }
+      # response['result'].each { |incident| puts incident['sys_id'] }
+    end
+    
+  end
 end
+
+# sl = Sl_helper.new
+# sl.rest_request(:incident, "INC0549670")

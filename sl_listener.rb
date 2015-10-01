@@ -102,7 +102,17 @@ post '/api/all' do
   all_matches = sl.scan_for_matches(message)
 
   # Encapsulate getting data from SL somehow
+  query_str = sl.get_query_str(all_matches[:incident])
+  incident_ids = sl.query('incident', query_str)
 
+  query_str = sl.get_query_str(all_matches[:task])
+  task_ids = sl.query('task', query_str)
+
+  query_str = sl.get_query_str(all_matches[:ritm])
+  ritm_ids = sl.query('ritm', query_str)
+
+  # TODO: handle KB's
+  
   # Encapsulate packaging response for hipchat
 
   

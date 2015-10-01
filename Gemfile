@@ -7,4 +7,6 @@ gem 'thin'
 
 gem 'erubis'
 
+gem 'rest-client'
+
 # gem 'puma'
