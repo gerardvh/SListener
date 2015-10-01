@@ -6,9 +6,11 @@ class Hipchat_helper
 
   attr_reader :all_config
 
-  @@dev_url = 'https://9223f920.ngrok.io/api/all'
+  @@dev_url = 'https://eba84e50.ngrok.io/api/all'
   @@prod_url = 'https://sl-listener.herokuapp.com/api/all'
 
+  # Pass in optional argument for dev_mode to adjust the url from development to production. 
+  # Defaults to dev_mode=true.
   def initialize(dev_mode=true)
     @all_config = {
       name: 'SListener',
@@ -16,7 +18,7 @@ class Hipchat_helper
       key: 'com.gerardvh.sl_incident_listener',
       links: {
         homepage: 'https://gerardvh.com',
-        self: 'https://9223f920.ngrok.io/config/all'
+        self: 'https://eba84e50.ngrok.io/config/all'
       },
       capabilities: {
       hipchatApiConsumer: {
@@ -41,6 +43,8 @@ class Sl_helper
   @@task_pattern = /[tT][aA][sS][kK]\d{7}\b/
   @@ritm_pattern = /[rR][iI][tT][mM]\d{7}\b/
 
+  # Pass in a block of text and get back a hash full of matches with symbol keys
+  # referring to :incident, :kb, :task, and :ritm.
   def scan_for_matches message
     patterns = {
       incident: @@incident_pattern,
@@ -50,27 +54,16 @@ class Sl_helper
     }
     # hash to store matches
     matches = {}
-
+    # scan for each pattern and save results in uppercase
     patterns.each do |key,value|
       matches[key] = message.scan(value).uniq.each { |m| m.upcase! }
     end 
-    
-    # scan for incident #'s and consolidate case
-    unique_incidents = message.scan(@@incident_pattern).uniq
-    matches[:incident] = unique_incidents.each { |m| m.upcase! }
-    # scan for KB's and consolidate case
-    unique_kbs = message.scan(@@kb_pattern).uniq
-    matches[:kb] = unique_kbs.each { |m| m.upcase! }
-    # scan for tasks and consolidate case
-    unique_tasks = message.scan(@@task_pattern).uniq
-    matches[:task] = unique_tasks.each { |m| m.upcase! }
-    # scan for ritms and consolidate case
-    unique_ritms = message.scan(@@ritm_pattern).uniq
-    matches[:ritm] = unique_ritms.each { |m| m.upcase! }
-    # return our consolidated hash of results
+    # return resulting hash
     return matches
   end
 
+  # Connection to Umich Service Link by passing in the table to query.
+  # Will return a connection object from Rest-client
   def sl_connection table
     user = ENV['SL_USER']
     password = ENV['SL_PASSWORD']
@@ -82,41 +75,20 @@ class Sl_helper
     RestClient::Resource.new baseURL + table, headers: sl_headers
   end
 
+  # Perform the query to Service Link with provided table and query string.
   def query table, query_str
-    response = JSON.parse sl_connection(table).get params: { number: query_str }
-    response['result'].each { |item| @ids << item['sys_id'] }
-    return @ids
+    items = []
+    response = JSON.parse sl_connection(table).get params: { sysparm_query: query_str }
+    # save the result for each item into an array
+    response['result'].each { |item| items << item }
+    return items
   end
 
+  # Returns a string of items in a collection separated by '^OR' which is
+  # appropriate for the Service Link API.
   def get_query_str sl_numbers
     # chain together multiple searches for one http request
-    param_str = sl_numbers.each { |num| num += '^OR'}
-    # remove the last '^OR'
-    param_str.chomp!('^OR')
-  end
-
-  def rest_request table, sl_numbers
-    case table
-      # set a certain value for table when we get a symbol argument
-    when :incident
-      query_sl('incident', param_str)
-
-      # response = JSON.parse sl_connection('incident').get params: { number: param_str }
-      # response['result'].each { |incident| puts incident['sys_id'] }
-    when :kb
-      # add string to base URL as a string for our link
-    when :task
-      query_sl('task', param_str)
-
-      # response = JSON.parse sl_connection('task').get params: { number: param_str }
-      # response['result'].each { |incident| puts incident['sys_id'] }
-    when :ritm
-      query_sl('ritm', param_str)
-
-      # response = JSON.parse sl_connection('ritm').get params: { number: param_str }
-      # response['result'].each { |incident| puts incident['sys_id'] }
-    end
-    
+    param_str = sl_numbers.join('^OR')
   end
 end
 
