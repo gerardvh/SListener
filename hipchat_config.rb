@@ -77,6 +77,7 @@ class Sl_helper
 
   # Perform the query to Service Link with provided table and query string.
   def query table, query_str
+    # TODO: add support for all potential tables
     items = []
     response = JSON.parse sl_connection(table).get params: { sysparm_query: query_str }
     # save the result for each item into an array
@@ -87,6 +88,7 @@ class Sl_helper
   # Returns a string of items in a collection separated by '^OR' which is
   # appropriate for the Service Link API.
   def get_query_str sl_numbers
+    # TODO: add support for all potential tables
     # chain together multiple searches for one http request
     param_str = sl_numbers.join('^OR')
   end

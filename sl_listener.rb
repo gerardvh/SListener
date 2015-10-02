@@ -36,6 +36,8 @@ def api_all_helper request
   {incident: 'incident'}.each { 
       |key,value| all_items[key] = sl.query(value, sl.get_query_str(all_matches[key])) 
     }
+
+  return all_items.to_json
   # Encapsulate getting data from SL somehow
   # query_str = sl.get_query_str(all_matches[:incident])
   # incident_ids = sl.query('incident', query_str)
