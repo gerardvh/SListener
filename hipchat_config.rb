@@ -8,6 +8,8 @@ class Hipchat_helper
 
   @@dev_url = 'https://eba84e50.ngrok.io/api/all'
   @@prod_url = 'https://sl-listener.herokuapp.com/api/all'
+  # Pattern: Maybe start with '/', match 2-4 letters (upper or lower-case), followed by 7 digits that end at the border of a word
+  @@all_pattern = '\/?(?:[a-z]|[A-Z]{2,4}\d{7}\b'
 
   # Pass in optional argument for dev_mode to adjust the url from development to production. 
   # Defaults to dev_mode=true.
@@ -28,7 +30,7 @@ class Hipchat_helper
       },
       webhook: [{
         url: dev_mode ? @@dev_url : @@prod_url,
-        pattern: '[incrmtaskbINCRMTASKB]{2,4}\d{7}\b',
+        pattern: @@all_pattern,
         event: 'room_message',
         name: 'sl_all_listener'
         }]
