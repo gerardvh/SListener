@@ -33,9 +33,9 @@ def api_all_helper request
 
   all_items = {}
 
-  {incident: 'incident'}.each { 
-      | key, value | all_items[key] = sl.query(value, sl.get_query_str(all_matches[key])) 
-    }
+  {incident: 'incident'}.each do |key, value|
+    all_items[key] = sl.query(value, sl.get_query_str(all_matches[key])) 
+  end
 
   return all_items.to_json
   # Encapsulate getting data from SL somehow
