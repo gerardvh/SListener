@@ -93,6 +93,3 @@ class Sl_helper
     param_str = sl_numbers.join('^OR')
   end
 end
-
-# sl = Sl_helper.new
-# sl.rest_request(:incident, "INC0549670")
