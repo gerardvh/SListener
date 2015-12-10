@@ -59,7 +59,7 @@ class Sl_helper
       end
     when 'kb_knowledge'
       items.each do |kb|
-        link = Knowledge.link(kb)
+        link = Knowledge.link(kb['number'])
         sl_items << Knowledge.new(kb['number'], link, kb['short_description'])
       end
     end
