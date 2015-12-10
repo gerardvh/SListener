@@ -25,16 +25,17 @@ def api_all_helper request
   message = JSON.parse(request.body.read)['item']['message']['message']
   p "got the message: #{message}"
   # Encapsulate scanning for relevant strings (for flexibility)
-  # can be accessed with symbols like all_matches[:incident] => array of unique matches
-  all_matches = sl.scan_for_matches(message)
+  incident_numbers = Incident.scan_for_matches(message)
+  kb_numbers = Knowledge.scan_for_matches(message)
 
   all_items = {}
 
-  {incident: 'incident',
-    kb: 'kb_knowledge'}.each do |key, value|
-    unless all_matches[key].empty?
-      all_items[key] = sl.query(value, all_matches[key])
-    end
+  unless incident_numbers.empty?
+    all_items[:incidents] = sl.query(Incident.table, incident_numbers)
+  end
+
+  unless kb_numbers.empty?
+    all_items[:kbs] = sl.query(Knowledge.table, kb_numbers)
   end
 
   return all_items
