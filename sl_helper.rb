@@ -1,31 +1,10 @@
+require 'base64'
+require 'rest-client'
+require_relative 'sl_items'
 
 class Sl_helper
-  @@incident_pattern = /[iI][nN][cC]\d{7}\b/
-  @@kb_pattern = /[kK][bB]\d{7}\b/
   @@task_pattern = /[tT][aA][sS][kK]\d{7}\b/
   @@ritm_pattern = /[rR][iI][tT][mM]\d{7}\b/
-
-  # Pass in a block of text and get back a hash full of matches with symbol keys
-  # referring to :incident, :kb, :task, and :ritm.
-  def scan_for_matches message
-    p "looking for matches in message: #{message}"
-    patterns = {
-      incident: @@incident_pattern,
-      kb: @@kb_pattern,
-      task: @@task_pattern,
-      ritm: @@ritm_pattern
-    }
-    # hash to store matches
-    matches = {}
-    # scan for each pattern and save results in uppercase
-    patterns.each do |key,value|
-      initial_matches = message.scan(value).uniq.each { |m| m.upcase! }
-      p "found these matches: #{initial_matches}"
-      matches[key] = initial_matches.uniq
-    end 
-    # return resulting hash
-    return matches
-  end
 
   # Connection to Umich Service Link by passing in the table to query.
   # Will return a connection object from Rest-client
@@ -68,7 +47,23 @@ class Sl_helper
         end
       end
     }
+
+    sl_items = []
+
+    # Make new Sl_items based on which table was queried and return those
+    case table
+    when 'incident'
+      items.each do |inc|
+        link = Incident.link(inc['sys_id'])
+        sl_items << Incident.new(inc['number'], link, inc['short_description'])
+      end
+    when 'kb_knowledge'
+      items.each do |kb|
+        link = Knowledge.link(kb['sys_id'])
+        sl_items << Knowledge.new(kb['number'], link, kb['short_description'])
+      end
+    end
     
-    return items
+    return sl_items
   end
 end
