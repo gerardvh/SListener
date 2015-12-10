@@ -30,7 +30,10 @@ def api_all_helper request
   incident_numbers = Incident.scan_for_matches(message)
   kb_numbers = Knowledge.scan_for_matches(message)
 
-  all_items = {}
+  all_items = {
+    incident: [],
+    kb: []
+  }
 
   unless incident_numbers.empty?
     all_items[:incident] = sl.query(Incident.table, incident_numbers)
