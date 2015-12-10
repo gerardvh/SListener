@@ -15,8 +15,8 @@ post '/api/all' do
   items = api_all_helper(request)
   unless items.empty?
     html_message = erb :hipchat_kb, locals: items
+    return Hipchat_helper.hipchat_return_message(html_message)
   end
-  return Hipchat_helper.hipchat_return_message(html_message)
 end
 
 def api_all_helper request
