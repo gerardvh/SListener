@@ -22,8 +22,8 @@ class Knowledge < SL_item
     'kb_knowledge'
   end
 
-  def self.link sys_id
-    return "https://umichprod.service-now.com/kb_view_customer.do?sysparm_article=#{sys_id}"
+  def self.link number
+    return "https://umichprod.service-now.com/kb_view_customer.do?sysparm_article=#{number}"
   end
 
   def self.pattern
