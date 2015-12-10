@@ -37,61 +37,13 @@ class Hipchat_helper
       }
     }
   end
-end
 
-class Sl_helper
-  @@incident_pattern = /[iI][nN][cC]\d{7}\b/
-  @@kb_pattern = /[kK][bB]\d{7}\b/
-  @@task_pattern = /[tT][aA][sS][kK]\d{7}\b/
-  @@ritm_pattern = /[rR][iI][tT][mM]\d{7}\b/
-
-  # Pass in a block of text and get back a hash full of matches with symbol keys
-  # referring to :incident, :kb, :task, and :ritm.
-  def scan_for_matches message
-    patterns = {
-      incident: @@incident_pattern,
-      kb: @@kb_pattern,
-      task: @@task_pattern,
-      ritm: @@ritm_pattern
-    }
-    # hash to store matches
-    matches = {}
-    # scan for each pattern and save results in uppercase
-    patterns.each do |key,value|
-      matches[key] = message.scan(value).uniq.each { |m| m.upcase! }
-    end 
-    # return resulting hash
-    return matches
-  end
-
-  # Connection to Umich Service Link by passing in the table to query.
-  # Will return a connection object from Rest-client
-  def sl_connection table
-    user = ENV['SL_USER']
-    password = ENV['SL_PASSWORD']
-    baseURL = 'https://umichprod.service-now.com/api/now/table/'
-    sl_headers = {
-      authorization: "Basic #{Base64.strict_encode64("#{user}:#{password}")}",
-      accept: 'application/json'
-      }
-    RestClient::Resource.new baseURL + table, headers: sl_headers
-  end
-
-  # Perform the query to Service Link with provided table and query string.
-  def query table, query_str
-    # TODO: add support for all potential tables
-    items = []
-    response = JSON.parse sl_connection(table).get params: { sysparm_query: query_str }
-    # save the result for each item into an array
-    response['result'].each { |item| items << item }
-    return items
-  end
-
-  # Returns a string of items in a collection separated by '^OR' which is
-  # appropriate for the Service Link API.
-  def get_query_str sl_numbers
-    # TODO: add support for all potential tables
-    # chain together multiple searches for one http request
-    param_str = sl_numbers.join('^OR')
+  def self.hipchat_return_message message
+    {
+      color: "green",
+      message: message,
+      notify: false,
+      message_format: "html"
+    }.to_json
   end
 end

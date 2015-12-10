@@ -8,6 +8,7 @@ class Sl_helper
   # Pass in a block of text and get back a hash full of matches with symbol keys
   # referring to :incident, :kb, :task, and :ritm.
   def scan_for_matches message
+    p "looking for matches in message: #{message}"
     patterns = {
       incident: @@incident_pattern,
       kb: @@kb_pattern,
@@ -18,7 +19,9 @@ class Sl_helper
     matches = {}
     # scan for each pattern and save results in uppercase
     patterns.each do |key,value|
-      matches[key] = message.scan(value).uniq.each { |m| m.upcase! }
+      initial_matches = message.scan(value).uniq.each { |m| m.upcase! }
+      p "found these matches: #{initial_matches}"
+      matches[key] = initial_matches.uniq
     end 
     # return resulting hash
     return matches
@@ -38,23 +41,34 @@ class Sl_helper
   end
 
   # Perform the query to Service Link with provided table and query string.
-  def query table, query_str
+  def query table, query_array
     # TODO: add support for all potential tables
+    p "got to query"
     items = []
-    response = JSON.parse sl_connection(table).get params: { sysparm_query: query_str }
-    # save the result for each item into an array
-    response['result'].each { |item| items << item }
+    query_str = ""
+
+    case table
+    when 'incident', 'kb_knowledge'
+      new_query = query_array.map { |q| "number=#{q}" }
+      query_str = new_query.join('^OR')
+    end
+
+    sl_connection(table).get params: { 
+      sysparm_query: query_str, 
+      sysparm_limit: 20,
+      sysparm_fields: 'number,sys_id,short_description,description,caller_id,text',
+      sysparm_display_value: true,
+      sysparm_exclude_reference_link: true
+    }{ | response, request, result, &block |
+      # p request
+      case response.code
+      when 200
+        if result = JSON.parse(response)['result']
+          result.each { |item| items << item }
+        end
+      end
+    }
+    
     return items
   end
-
-  # Returns a string of items in a collection separated by '^OR' which is
-  # appropriate for the Service Link API.
-  def get_query_str sl_numbers
-    # TODO: add support for all potential tables
-    # chain together multiple searches for one http request
-    param_str = sl_numbers.join('^OR')
-  end
 end
-
-# sl = Sl_helper.new
-# sl.rest_request(:incident, "INC0549670")

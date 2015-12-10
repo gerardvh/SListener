@@ -1,2 +1,8 @@
-Hello from hipchat_kb.erb
-<%= @data['event'] %>
+<ul>
+  <% for inc in incident -%>
+    <li><a href="https://umichprod.service-now.com/incident.do?sys_id=<%= inc['sys_id']%>"><strong><%= inc['number'] %></strong></a>: <%= inc['short_description'] %></li>
+  <% end %>
+  <% for k in kb %>
+    <li><a href="https://umichprod.service-now.com/kb_view_customer.do?sysparm_article=<%= k['number']%>"><strong><%= k['number'] %></strong></a>: <%= k['short_description'] %></li>
+  <% end -%>
+</ul>
