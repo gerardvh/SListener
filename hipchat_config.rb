@@ -7,7 +7,7 @@ class Hipchat_helper
   attr_reader :all_config
 
   @@dev_url = 'https://eba84e50.ngrok.io/api/all'
-  @@prod_url = 'https://sl-listener.herokuapp.com/api/all'
+  @@prod_url = 'https://sleepy-badlands-1684.herokuapp.com/api/all'
   # Pattern: Maybe start with '/', match 2-4 letters (upper or lower-case), followed by 7 digits that end at the border of a word
   @@all_pattern = '\/?(?:[a-z]|[A-Z]{2,4}\d{7}\b'
 
@@ -20,7 +20,7 @@ class Hipchat_helper
       key: 'com.gerardvh.sl_incident_listener',
       links: {
         homepage: 'https://gerardvh.com',
-        self: 'https://eba84e50.ngrok.io/config/all'
+        self: 'https://sleepy-badlands-1684.herokuapp.com/config/all'
       },
       capabilities: {
       hipchatApiConsumer: {

@@ -7,7 +7,7 @@ require_relative('sl_helper')
 require_relative('sl_items')
 
 get '/config/all' do
-  hip = Hipchat_helper.new(dev_mode=true)
+  hip = Hipchat_helper.new(dev_mode=false)
   hip.all_config.to_json
 end
 
@@ -31,11 +31,11 @@ def api_all_helper request
   all_items = {}
 
   unless incident_numbers.empty?
-    all_items[:incidents] = sl.query(Incident.table, incident_numbers)
+    all_items[:incident] = sl.query(Incident.table, incident_numbers)
   end
 
   unless kb_numbers.empty?
-    all_items[:kbs] = sl.query(Knowledge.table, kb_numbers)
+    all_items[:kb] = sl.query(Knowledge.table, kb_numbers)
   end
 
   return all_items
