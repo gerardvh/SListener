@@ -96,15 +96,26 @@ def api_all_helper request
     kb: []
   }
 
-  all_items[:incident].each do |inc|
-    # p inc
-    link = Incident.link(inc['sys_id'])
-    items_with_links[:incident] << Incident.new(inc['number'], link, inc['short_description'])
-  end
+  # all_items[:incident].each do |inc|
+  #   # p inc
+  #   link = Incident.link(inc['sys_id'])
+  #   items_with_links[:incident] << Incident.new(inc['number'], link, inc['short_description'])
+  # end
 
-  all_items[:kb].each do |kb|
-    link = Knowledge.link(kb['number'])
-    items_with_links[:kb] << Knowledge.new(kb['number'], link, kb['short_description'])
+  # all_items[:kb].each do |kb|
+  #   link = Knowledge.link(kb['number'])
+  #   items_with_links[:kb] << Knowledge.new(kb['number'], link, kb['short_description'])
+  # end
+
+  all_items.each_key do |table|
+    all_items[table].each do |sl_item|
+      case table
+      when :incident
+        items_with_links[table] << Incident.new(sl_item['number'], Incident.link(sl_item['sys_id']), sl_item['short_description'])
+      when :kb
+        items_with_links[table] << Knowledge.new(sl_item['number'], Knowledge.link(sl_item['number']), sl_item['short_description'])
+      end
+    end
   end
 
   return items_with_links 

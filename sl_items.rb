@@ -44,3 +44,23 @@ class Incident < SL_item
     /[iI][nN][cC]\d{7}\b/
   end
 end
+
+class Task < SL_item
+  def self.table
+    'sc_task'
+  end
+
+  def self.pattern
+    /[tT][aA][sS][kK]\d{7}\b/
+  end
+end
+
+class Request < SL_item
+  def self.table
+    'sc_req_item'
+  end
+  
+  def self.pattern
+    /[rR][iI][tT][mM]\d{7}\b/
+  end
+end
