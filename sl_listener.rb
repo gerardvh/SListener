@@ -1,10 +1,15 @@
 require 'sinatra'
 require 'tilt/erubis'
 require 'json'
+require 'redis'
 
 require_relative('hipchat_config')
 require_relative('sl_helper')
 require_relative('sl_items')
+
+#### Setup REDIS ####
+uri = URI.parse(ENV["REDIS_URL"])
+REDIS = Redis.new(host: uri.host, port: uri.port, password: uri.password)
 
 get '/config/all' do
   hip = Hipchat_helper.new(dev_mode=false)
@@ -42,6 +47,8 @@ def api_all_helper request
   unless kb_numbers.empty?
     all_items[:kb] = sl.query(Knowledge.table, kb_numbers)
   end
+
+  REDIS.set("all_items", all_items)
 
   return all_items
 
