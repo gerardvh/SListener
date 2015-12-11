@@ -2,6 +2,7 @@ require 'sinatra'
 require 'tilt/erubis'
 require 'json'
 require 'redis'
+require 'uri'
 
 require_relative('hipchat_config')
 require_relative('sl_helper')
