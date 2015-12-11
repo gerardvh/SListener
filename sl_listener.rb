@@ -70,10 +70,10 @@ def api_all_helper request
   unless inc_to_query.empty?
     incs_from_sl = sl.query(Incident.table, inc_to_query)
     unless incs_from_sl.empty? # Make sure we got a response from SL
-      # Add to our active hash
-      all_items[:incident] << incs_from_sl
-      # Add to redis store
       incs_from_sl.each do |inc|
+        # Add to our active hash
+        all_items[:incident] << inc
+        # Add to redis store
         REDIS.set(inc['number'], inc.to_json)
       end
     end
@@ -82,10 +82,10 @@ def api_all_helper request
   unless kb_to_query.empty?
     kbs_from_sl = sl.query(Knowledge.table, kb_to_query)
     unless kbs_from_sl.empty? # Make sure we got a response from SL
-      # Add to our active hash
-      all_items[:kb] << kbs_from_sl
-      # Add to redis store
       kbs_from_sl.each do |kb|
+        # Add to our active hash
+        all_items[:kb] << kb
+        # Add to redis store
         REDIS.set(kb['number'], kb.to_json)
       end
     end
@@ -99,6 +99,7 @@ def api_all_helper request
   }
 
   all_items[:incident].each do |inc|
+    p inc
     link = Incident.link(inc['sys_id'])
     items_with_links[:incident] << Incident.new(inc['number'], link, inc['short_description'])
   end
