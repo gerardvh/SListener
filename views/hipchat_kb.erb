@@ -2,7 +2,7 @@
   <% for inc in incident -%>
     <li><a href="<%= inc.link %>"><strong><%= inc.number %></strong></a>: <%= inc.short_description %></li>
   <% end %>
-  <% for k in kb %>
+  <% for k in kb_knowledge %>
     <li><a href="<%= k.link %>"><strong><%= k.number %></strong></a>: <%= k.short_description %></li>
   <% end -%>
 </ul>

@@ -29,7 +29,7 @@ class Sl_helper
     query_str = ""
 
     case table
-    when 'incident', 'kb_knowledge'
+    when Incident.table, Knowledge.table
       new_query = query_array.map { |q| "number=#{q}" }
       query_str = new_query.join('^OR')
     end
