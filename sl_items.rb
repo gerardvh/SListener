@@ -4,6 +4,7 @@ class SL_item
 
   attr_accessor :number, :link, :short_description
 
+  # TODO: new init method that just takes json and does the figuring out of what it is
   def initialize(number, link, short_description)
     @number = number
     @link = link

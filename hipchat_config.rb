@@ -1,7 +1,3 @@
-require 'json'
-require 'rest-client'
-require 'base64'
-
 class Hipchat_helper
 
   attr_reader :all_config
@@ -25,15 +21,14 @@ class Hipchat_helper
       capabilities: {
       hipchatApiConsumer: {
         scopes: [
-            'send_notification'
+          'send_notification'
         ]
       },
       webhook: [{
         url: dev_mode ? @@dev_url : @@prod_url,
         pattern: @@all_pattern,
         event: 'room_message',
-        name: 'sl_all_listener'
-        }]
+        name: 'sl_all_listener' }]
       }
     }
   end
@@ -43,7 +38,6 @@ class Hipchat_helper
       color: "green",
       message: message,
       notify: false,
-      message_format: "html"
-    }.to_json
+      message_format: "html" }.to_json
   end
 end

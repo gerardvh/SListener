@@ -1,5 +1,7 @@
 require 'base64'
 require 'rest-client'
+require 'json'
+
 require_relative 'sl_items'
 
 class Sl_helper

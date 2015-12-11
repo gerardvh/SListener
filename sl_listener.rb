@@ -38,8 +38,8 @@ def api_all_helper request
   end
   
   template = {
-    incident: [],
-    kb: []
+    Incident.table => [],
+    Knowledge.table => []
   }
   # Copying our template to reduce code duplication
   numbers = Hash.new.merge(template)
@@ -66,26 +66,21 @@ def api_all_helper request
   end
 
   query_numbers.each_pair do |table, nums|
-    items_from_sl = []
-    case table
-    when :incident
-      items_from_sl = sl.query(Incident.table, nums)
-    when :kb
-      items_from_sl = sl.query(Knowledge.table, nums)
-    end
+    items_from_sl = sl.query(table, nums)
     items_from_sl.each do |item|
       all_items[table] << item
       REDIS.set(item['number'], item.to_json)
     end
   end
 
-  all_items.each_pair do |table, nums|
-    nums.each do |sl_item|
+  all_items.each_pair do |table, sl_items|
+    sl_items.each do |item|
       case table
       when :incident
-        items_with_links[table] << Incident.new(sl_item['number'], Incident.link(sl_item['sys_id']), sl_item['short_description'])
+        # Maybe I can override item init to take a table parameter and do the logic there?
+        items_with_links[table] << Incident.new(item['number'], Incident.link(item['sys_id']), item['short_description'])
       when :kb
-        items_with_links[table] << Knowledge.new(sl_item['number'], Knowledge.link(sl_item['number']), sl_item['short_description'])
+        items_with_links[table] << Knowledge.new(item['number'], Knowledge.link(item['number']), item['short_description'])
       end
     end
   end
