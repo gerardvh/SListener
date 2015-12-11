@@ -22,7 +22,7 @@ class Sl_helper
   # Perform the query to Service Link with provided table and query string.
   def query table, query_array
     # TODO: add support for all potential tables
-    p "got to query"
+    # p "got to query"
     items = []
     query_str = ""
 
@@ -32,38 +32,42 @@ class Sl_helper
       query_str = new_query.join('^OR')
     end
 
-    sl_connection(table).get params: { 
-      sysparm_query: query_str, 
-      sysparm_limit: 20,
-      sysparm_fields: 'number,sys_id,short_description,description,caller_id,text',
-      sysparm_display_value: true,
-      sysparm_exclude_reference_link: true
-    }{ | response, request, result, &block |
-      # p request
-      case response.code
-      when 200
-        if result = JSON.parse(response)['result']
-          result.each { |item| items << item }
+    unless query_str == "" # Don't actually query SL if we don't have any parameters
+      sl_connection(table).get params: { 
+        sysparm_query: query_str, 
+        sysparm_limit: 20,
+        sysparm_fields: 'number,sys_id,short_description,description,caller_id,text',
+        sysparm_display_value: true,
+        sysparm_exclude_reference_link: true
+      }{ | response, request, result, &block |
+        # p request
+        case response.code
+        when 200
+          if result = JSON.parse(response)['result']
+            result.each { |item| items << item }
+          end
         end
-      end
-    }
-
-    sl_items = []
-
-    # Make new Sl_items based on which table was queried and return those
-    case table
-    when 'incident'
-      items.each do |inc|
-        link = Incident.link(inc['sys_id'])
-        sl_items << Incident.new(inc['number'], link, inc['short_description'])
-      end
-    when 'kb_knowledge'
-      items.each do |kb|
-        link = Knowledge.link(kb['number'])
-        sl_items << Knowledge.new(kb['number'], link, kb['short_description'])
-      end
+      }
     end
     
-    return sl_items
+
+    # sl_items = []
+
+    # Make new Sl_items based on which table was queried and return those
+    # case table
+    # when 'incident'
+    #   items.each do |inc|
+    #     link = Incident.link(inc['sys_id'])
+    #     sl_items << Incident.new(inc['number'], link, inc['short_description'])
+    #   end
+    # when 'kb_knowledge'
+    #   items.each do |kb|
+    #     link = Knowledge.link(kb['number'])
+    #     sl_items << Knowledge.new(kb['number'], link, kb['short_description'])
+    #   end
+    # end
+    
+    # Return either an empty array, or an array of hashes
+    return items
   end
 end

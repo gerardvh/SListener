@@ -30,8 +30,13 @@ def api_all_helper request
   # rewind in case it was read by something else
   request.body.rewind
   # get what the user said in chat
-  message = JSON.parse(request.body.read)['item']['message']['message']
-  p "got the message: #{message}"
+  begin
+    message = JSON.parse(request.body.read)['item']['message']['message']
+  rescue Exception => e
+    # Return early if we can't parse the JSON from Hipchat
+    return {}
+  end
+  
   # Encapsulate scanning for relevant strings (for flexibility)
   incident_numbers = Incident.scan_for_matches(message)
   kb_numbers = Knowledge.scan_for_matches(message)
@@ -41,27 +46,69 @@ def api_all_helper request
     kb: []
   }
 
-  unless incident_numbers.empty?
-    all_items[:incident] = sl.query(Incident.table, incident_numbers)
+  inc_to_query = []
+  kb_to_query = []
+
+  incident_numbers.each do |inc|
+    if incident = REDIS.get(inc) # Check if it is saved in our db
+      # Redis stores all items as a string, so we have it serialized as json
+      all_items[:incident] << JSON.parse(incident)
+    else
+      # If we don't have it in the DB, get ready to query SL
+      inc_to_query << inc
+    end
   end
 
-  unless kb_numbers.empty?
-    all_items[:kb] = sl.query(Knowledge.table, kb_numbers)
+  kb_numbers.each do |kb_number|
+    if kb = REDIS.get(kb_number) # Check if exists in db
+      all_items[:kb] << JSON.parse(kb)
+    else
+      kb_to_query << kb_number
+    end
   end
 
-  REDIS.set("all_items", all_items.to_json)
+  unless inc_to_query.empty?
+    incs_from_sl = sl.query(Incident.table, inc_to_query)
+    unless incs_from_sl.empty? # Make sure we got a response from SL
+      # Add to our active hash
+      all_items[:incident] << incs_from_sl
+      # Add to redis store
+      incs_from_sl.each do |inc|
+        REDIS.set(inc['number'], inc.to_json)
+      end
+    end
+  end
 
-  return all_items
+  unless kb_to_query.empty?
+    kbs_from_sl = sl.query(Knowledge.table, kb_to_query)
+    unless kbs_from_sl.empty? # Make sure we got a response from SL
+      # Add to our active hash
+      all_items[:kb] << kbs_from_sl
+      # Add to redis store
+      kbs_from_sl.each do |kb|
+        REDIS.set(kb['number'], kb.to_json)
+      end
+    end
+  end
 
-  # TODO: handle KB's and DRY out above code
+  # TODO: convert to objects and return that?
+  # OR: make sure we got LINKS
+  items_with_links = {
+    incident: [],
+    kb: []
+  }
 
-  # Encapsulate packaging response for hipchat
-  
-  # IDEAS:
-  # send all traffic through here since we want to group responses anyway
-  # use regex to parse for matches of KB's, Incidents, and Tasks/RITMs
-  # add each link to <li> for the response
-  
+  all_items[:incident].each do |inc|
+    link = Incident.link(inc['sys_id'])
+    items_with_links[:incident] << Incident.new(inc['number'], link, inc['short_description'])
+  end
+
+  all_items[:kb].each do |kb|
+    link = Knowledge.link(kb['number'])
+    items_with_links[:kb] << Knowledge.new(kb['number'], link, kb['short_description'])
+  end
+
+  return items_with_links 
 end
 
 
