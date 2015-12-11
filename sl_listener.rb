@@ -77,6 +77,8 @@ def api_all_helper request
       case table
       when Incident.table
         # Maybe I can override item init to take a table parameter and do the logic there?
+        p items_with_links
+        p "table = #{table}"
         items_with_links[table] << Incident.new(item['number'], Incident.link(item['sys_id']), item['short_description'])
       when Knowledge.table
         items_with_links[table] << Knowledge.new(item['number'], Knowledge.link(item['number']), item['short_description'])
