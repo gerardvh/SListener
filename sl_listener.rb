@@ -37,7 +37,7 @@ def api_all_helper request
     return {}
   end
   
-  # Encapsulate scanning for relevant strings (for flexibility)
+  # Encapsulate scanning for relevant strings
   incident_numbers = Incident.scan_for_matches(message)
   kb_numbers = Knowledge.scan_for_matches(message)
 
@@ -91,8 +91,6 @@ def api_all_helper request
     end
   end
 
-  # TODO: convert to objects and return that?
-  # OR: make sure we got LINKS
   items_with_links = {
     incident: [],
     kb: []

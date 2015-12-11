@@ -49,24 +49,6 @@ class Sl_helper
         end
       }
     end
-    
-
-    # sl_items = []
-
-    # Make new Sl_items based on which table was queried and return those
-    # case table
-    # when 'incident'
-    #   items.each do |inc|
-    #     link = Incident.link(inc['sys_id'])
-    #     sl_items << Incident.new(inc['number'], link, inc['short_description'])
-    #   end
-    # when 'kb_knowledge'
-    #   items.each do |kb|
-    #     link = Knowledge.link(kb['number'])
-    #     sl_items << Knowledge.new(kb['number'], link, kb['short_description'])
-    #   end
-    # end
-    
     # Return either an empty array, or an array of hashes
     return items
   end
