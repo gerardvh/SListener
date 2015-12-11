@@ -47,8 +47,8 @@ def api_all_helper request
   items_with_links = Hash.new.merge(template)
 
   # Encapsulate scanning for relevant strings
-  numbers[:incident] = Incident.scan_for_matches(message)
-  numbers[:kb] = Knowledge.scan_for_matches(message)
+  numbers[Incident.table] = Incident.scan_for_matches(message)
+  numbers[Knowledge.table] = Knowledge.scan_for_matches(message)
 
 
   # TODO: Add comments and log statements
