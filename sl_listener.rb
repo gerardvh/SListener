@@ -41,10 +41,10 @@ def api_all_helper request
     Knowledge.table => []
   }
   # Copying our template to reduce code duplication
-  numbers = Hash.new.merge(template)
-  query_numbers = Hash.new.merge(template)
-  all_items = Hash.new.merge(template)
-  items_with_links = Hash.new.merge(template)
+  numbers = template.clone
+  query_numbers = template.clone
+  all_items = template.clone
+  items_with_links = template.clone
 
   # Encapsulate scanning for relevant strings
   numbers[Incident.table] = Incident.scan_for_matches(message)
