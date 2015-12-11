@@ -99,7 +99,7 @@ def api_all_helper request
   }
 
   all_items[:incident].each do |inc|
-    p inc
+    # p inc
     link = Incident.link(inc['sys_id'])
     items_with_links[:incident] << Incident.new(inc['number'], link, inc['short_description'])
   end
