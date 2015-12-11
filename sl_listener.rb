@@ -9,8 +9,8 @@ require_relative('sl_helper')
 require_relative('sl_items')
 
 #### Setup REDIS ####
-uri = URI.parse(ENV["REDIS_URL"])
-REDIS = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+# Use the ENV var with our redis url by not including any arguments.
+REDIS = Redis.new
 
 get '/config/all' do
   hip = Hipchat_helper.new(dev_mode=false)
@@ -49,7 +49,7 @@ def api_all_helper request
     all_items[:kb] = sl.query(Knowledge.table, kb_numbers)
   end
 
-  REDIS.set("all_items", all_items)
+  REDIS.set("all_items", all_items.to_json)
 
   return all_items
 
