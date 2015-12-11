@@ -75,10 +75,10 @@ def api_all_helper request
   all_items.each_pair do |table, sl_items|
     sl_items.each do |item|
       case table
-      when :incident
+      when Incident.table
         # Maybe I can override item init to take a table parameter and do the logic there?
         items_with_links[table] << Incident.new(item['number'], Incident.link(item['sys_id']), item['short_description'])
-      when :kb
+      when Knowledge.table
         items_with_links[table] << Knowledge.new(item['number'], Knowledge.link(item['number']), item['short_description'])
       end
     end
