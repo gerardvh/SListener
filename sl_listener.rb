@@ -24,6 +24,13 @@ post '/api/all' do
   end
 end
 
+def template
+  return {
+    Incident.table => [],
+    Knowledge.table => []
+  }
+end
+
 def api_all_helper request
   sl = Sl_helper.new
   # rewind in case it was read by something else
@@ -36,15 +43,11 @@ def api_all_helper request
     return {}
   end
   
-  template = {
-    Incident.table => [],
-    Knowledge.table => []
-  }
   # Copying our template to reduce code duplication
-  numbers = template.clone
-  query_numbers = template.clone
-  all_items = template.clone
-  items_with_links = template.clone
+  numbers = template
+  query_numbers = template
+  all_items = template
+  items_with_links = template
 
   # Encapsulate scanning for relevant strings
   numbers[Incident.table] = Incident.scan_for_matches(message)
@@ -74,11 +77,12 @@ def api_all_helper request
 
   all_items.each_pair do |table, sl_items|
     sl_items.each do |item|
+      p "table = #{table}"
       case table
       when Incident.table
         # Maybe I can override item init to take a table parameter and do the logic there?
         p items_with_links
-        p "table = #{table}"
+        
         items_with_links[table] << Incident.new(item['number'], Incident.link(item['sys_id']), item['short_description'])
       when Knowledge.table
         items_with_links[table] << Knowledge.new(item['number'], Knowledge.link(item['number']), item['short_description'])
