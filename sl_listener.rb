@@ -13,15 +13,14 @@ require_relative('sl_items')
 REDIS = Redis.new
 
 get '/config/all' do
-  hip = Hipchat_helper.new(dev_mode=false)
-  hip.all_config.to_json
+  return Hipchat_helper.all_config
 end
 
 post '/api/all' do
   items = api_all_helper(request)
   unless items.empty?
     html_message = erb :hipchat_kb, locals: items
-    return Hipchat_helper.hipchat_return_message(html_message)
+    return Hipchat_helper.return_message(html_message)
   end
 end
 
