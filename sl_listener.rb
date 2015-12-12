@@ -17,8 +17,16 @@ get '/config/all' do
 end
 
 post '/api/all' do
+  # Increment a count of how many times this API is accessed
+  REDIS.incr('api:all:attempts')
   items = api_all_helper(request)
-  unless items.empty?
+  if items.empty?
+    REDIS.incr('api:all:unsupported')
+  else
+    # Increment a count of how many individual items have been returned
+    items.values.each do |array|
+      array.each { REDIS.incr('api:all:items_returned') }
+    end
     html_message = erb :hipchat_kb, locals: items
     return Hipchat_helper.return_message(html_message)
   end
@@ -44,6 +52,8 @@ def api_all_helper request
   end
   
   # Copying our template to reduce code duplication
+  # The template method should return a fresh hash with service link table-names
+  # as the keys and empty arrays as values.
   numbers = template
   query_numbers = template
   all_items = template
