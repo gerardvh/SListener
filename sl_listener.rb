@@ -22,6 +22,7 @@ post '/api/all' do
   items = api_all_helper(request)
   if items.empty?
     REDIS.incr('api:all:unsupported')
+    break
   else
     # Increment a count of how many individual items have been returned
     items.values.each do |array|
@@ -62,7 +63,6 @@ def api_all_helper request
   # Encapsulate scanning for relevant strings
   numbers[Incident.table] = Incident.scan_for_matches(message)
   numbers[Knowledge.table] = Knowledge.scan_for_matches(message)
-
 
   # TODO: Add comments and log statements
   # maybe keep track of how many times we pull from the cache?
