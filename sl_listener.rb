@@ -84,7 +84,7 @@ end
 def separate_cached_items numbers=template(), cached_items=template(), items_to_query=template()
   numbers.each_pair do |table, nums|
     nums.each do |num|
-      if item = $redis.get("#{table}:#{item['num']}")
+      if item = $redis.get("#{table}:#{num}")
         cached_items[table] << JSON.parse(item)
       else
         items_to_query[table] << num
