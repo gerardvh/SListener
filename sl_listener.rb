@@ -63,7 +63,7 @@ post '/api/all' do
   all_items = combine_cache_and_query(cached_items, items_to_query)
   items_with_links = add_links(all_items)
 
-  items.values.each do |array|
+  items_with_links.values.each do |array|
     array.each { $redis.incr('api:all:items_returned') }
   end
 
