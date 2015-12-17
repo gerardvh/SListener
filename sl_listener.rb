@@ -41,6 +41,7 @@ post '/api/all' do
   tasks = Task.scan_for_matches(message)
   unless tasks.empty?
     tasks.each do |task_number|
+      # FIXME: "WRONGTYPE" error
       $redis.sadd('api:unsupported:task', task_number)
     end
   end
@@ -48,6 +49,7 @@ post '/api/all' do
   requests = Request.scan_for_matches(message)
   unless requests.empty?
     requests.each do |req_number|
+      # FIXME: "WRONGTYPE" error
       $redis.sadd('api:unsupported:request', req_number)
     end
   end
@@ -82,7 +84,7 @@ end
 def separate_cached_items numbers=template(), cached_items=template(), items_to_query=template()
   numbers.each_pair do |table, nums|
     nums.each do |num|
-      if item = $redis.get(num)
+      if item = $redis.get("#{table}:#{item['num']}")
         cached_items[table] << JSON.parse(item)
       else
         items_to_query[table] << num
