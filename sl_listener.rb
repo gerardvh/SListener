@@ -67,7 +67,7 @@ post '/api/all' do
     array.each { $redis.incr('api:all:items_returned') }
   end
 
-  html_message = erb :hipchat_kb, locals: items
+  html_message = erb :hipchat_kb, locals: items_with_links
   return Hipchat_helper.return_message(html_message)
 end
 
