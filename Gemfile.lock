@@ -1,6 +1,10 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    ZenTest (4.11.0)
+    autotest (4.4.6)
+      ZenTest (>= 4.4.1)
+    bacon (1.2.0)
     daemons (1.2.3)
     domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
@@ -14,6 +18,8 @@ GEM
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
+    rack-test (0.6.3)
+      rack (>= 1.0)
     redis (3.2.1)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -38,7 +44,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  autotest
+  bacon
   erubis
+  rack-test
   redis
   rest-client
   sinatra
