@@ -25,7 +25,6 @@ describe 'The SListener App' do
   before do
     @empty_message = 'test message'
     @message_with_each_item = 'INC0603557, INC0598908, KB0018959 INC0603557 TASK0603557 RITM0603557'
-    @test_hipchat_body = {"event"=>"room_message", "item"=>{"message"=>{"date"=>"2015-12-23T20:28:02.856386+00:00", "from"=>{"id"=>2153022, "links"=>{"self"=>"https://api.hipchat.com/v2/user/2153022"}, "mention_name"=>"GerardVanHalsema", "name"=>"Gerard Van Halsema", "version"=>"00000000"}, "id"=>"cfe3f669-0531-4e58-aaa4-4ec30d47fa78", "mentions"=>[], "message"=>"TASK0128982\nINC0603557, INC0598908, INC0598908, INC0594911, KB0018959\"\"INC0603557, INC0598908, INC0598908, INC0594911, KB0018959\"\"INC0603557, INC0598908, INC0598908, INC0594911, KB0018959\"\"INC0603557, INC0598908, INC0598908, INC0594911, ", "type"=>"message"}, "room"=>{"id"=>2248879, "is_archived"=>false, "links"=>{"participants"=>"https://api.hipchat.com/v2/room/2248879/participant", "self"=>"https://api.hipchat.com/v2/room/2248879", "webhooks"=>"https://api.hipchat.com/v2/room/2248879/webhook"}, "name"=>"slistener2.0", "privacy"=>"public", "version"=>"9GEMO4QZ"}}, "oauth_client_id"=>"aa9e123e-4814-422f-9040-44e919957319", "webhook_id"=>3321968}.to_json
   end
 
   describe 'Configuration' do
