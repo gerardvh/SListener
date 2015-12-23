@@ -14,6 +14,7 @@ require('sl_items')
 #### Setup REDIS ####
 # Use the ENV var with our redis url by not including any arguments.
 $redis = Redis.new
+logging = false
 
 get '/config/all' do
   return Hipchat_helper.all_config
@@ -21,7 +22,7 @@ end
 
 post '/api/all' do
   # Increment a count of how many times this API is accessed
-  $redis.incr('api:all:attempts')
+  $redis.incr('api:all:attempts') if logging
   # rewind in case it was read by something else
   request.body.rewind
   # get what the user said in chat
@@ -29,7 +30,9 @@ post '/api/all' do
     message = JSON.parse(request.body.read)['item']['message']['message']
   rescue Exception => e
     # Return early if we can't parse the JSON from Hipchat
-    $redis.incr('api:failure:message_parse')
+    $redis.incr('api:failure:message_parse') if logging
+    
+    halt(404)
     return
   end
   
@@ -42,7 +45,7 @@ post '/api/all' do
   unless tasks.empty?
     tasks.each do |task_number|
       # FIXME: "WRONGTYPE" error
-      $redis.sadd('api:unsupported:task', task_number)
+      $redis.sadd('api:unsupported:task', task_number) if logging
     end
   end
 
@@ -50,7 +53,7 @@ post '/api/all' do
   unless requests.empty?
     requests.each do |req_number|
       # FIXME: "WRONGTYPE" error
-      $redis.sadd('api:unsupported:request', req_number)
+      $redis.sadd('api:unsupported:request', req_number) if logging
     end
   end
 
@@ -66,7 +69,7 @@ post '/api/all' do
   items_with_links = add_links(all_items)
 
   items_with_links.values.each do |array|
-    array.each { $redis.incr('api:all:items_returned') }
+    array.each { $redis.incr('api:all:items_returned') } if logging
   end
 
   html_message = erb :hipchat_kb, locals: items_with_links
@@ -101,7 +104,7 @@ def combine_cache_and_query cached_items=template(), items_to_query=template()
     items_from_sl.each do |item|
       cached_items[table] << item
       # Set our cache for queried items with keys like "incident:INC098219"
-      $redis.set("#{table}:#{item['number']}", item.to_json)
+      # $redis.set("#{table}:#{item['number']}", item.to_json)
     end
   end
   return cached_items # Which now also has the newly queried items as well

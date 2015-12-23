@@ -11,5 +11,11 @@ gem 'rest-client'
 
 gem 'test-unit-minitest'
 
+gem 'rack-test'
+
+gem 'bacon'
+
+gem 'autotest'
+
 gem 'redis'
 # gem 'puma'
