@@ -26,7 +26,9 @@ post '/api/all' do
   request.body.rewind
   # get what the user said in chat
   begin
-    message = JSON.parse(request.body.read)['item']['message']['message']
+    maybe_message = request.body.read
+    p maybe_message
+    message = JSON.parse(maybe_message)['item']['message']['message']
   rescue Exception => e
     # Return early if we can't parse the JSON from Hipchat
     $redis.incr('api:failure:message_parse')
