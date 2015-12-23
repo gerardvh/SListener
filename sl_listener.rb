@@ -27,12 +27,12 @@ post '/api/all' do
   request.body.rewind
   # get what the user said in chat
   begin
-    message = JSON.parse(request.body.read)['item']['message']['message']
+    maybe_message = JSON.parse(request.body.read)
+    message = maybe_message['item']['message']['message']
   rescue Exception => e
     # Return early if we can't parse the JSON from Hipchat
     $redis.incr('api:failure:message_parse') if logging
-    
-    halt(404)
+    halt(500)
     return
   end
   
@@ -61,6 +61,7 @@ post '/api/all' do
   numbers[Knowledge.table] = Knowledge.scan_for_matches(message)
 
   if numbers[Incident.table].empty? && numbers[Knowledge.table].empty?
+    halt(404)
     return # Early return if we have no supported items to parse
   end
 
