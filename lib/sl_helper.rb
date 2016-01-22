@@ -24,10 +24,9 @@ class Sl_helper
   # Perform the query to Service Link with provided table and query string.
   def query table, query_array
     # TODO: add support for all potential tables
-    # p "got to query"
     items = []
     query_str = ""
-
+    # Limiting to the supported tables Incident and Knowledge
     case table
     when Incident.table, Knowledge.table
       new_query = query_array.map { |q| "number=#{q}" }
